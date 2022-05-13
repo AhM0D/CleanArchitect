@@ -1,3 +1,4 @@
 <resources>
 	<string name="app_name">ArchitectSample</string>
+	<string name="empty_list" translatable="false">list is empty</string>
 </resources>
