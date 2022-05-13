@@ -1,4 +1,4 @@
-package ir.myket.architectsample.data.model
+package ir.myket.architectsample.domain.model
 
 import ir.myket.architectsample.data.remote.dto.TeamMember
 

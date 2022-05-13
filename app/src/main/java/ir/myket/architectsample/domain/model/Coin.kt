@@ -1,4 +1,4 @@
-package ir.myket.architectsample.data.model
+package ir.myket.architectsample.domain.model
 
 data class Coin(
 	val id: String,

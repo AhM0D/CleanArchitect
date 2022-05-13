@@ -2,7 +2,7 @@ package ir.myket.architectsample.data.remote.dto
 
 
 import com.google.gson.annotations.SerializedName
-import ir.myket.architectsample.data.model.Coin
+import ir.myket.architectsample.domain.model.Coin
 
 data class CoinDto(
     val id: String,

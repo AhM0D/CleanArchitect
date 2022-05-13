@@ -9,8 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ir.myket.architectsample.R
-import ir.myket.architectsample.data.model.CoinDetail
+import ir.myket.architectsample.common.Resource
 import ir.myket.architectsample.databinding.FragmentCoinDetailBinding
+import ir.myket.architectsample.domain.model.CoinDetail
 
 @AndroidEntryPoint
 class DetailContentFragment : Fragment(R.layout.fragment_coin_detail) {
@@ -33,19 +34,16 @@ class DetailContentFragment : Fragment(R.layout.fragment_coin_detail) {
 		super.onViewCreated(view, savedInstanceState)
 		viewModel.getCoinDetail(requireArguments().getString("id") ?: "0")
 		viewModel.coinDetail.observe(viewLifecycleOwner) {
-			binding.progressBar.isVisible = it.isLoading
-			if (!it.isLoading) {
-				it.error?.message?.also { error ->
-					handleErrorMessage(error)
-				}
-				it.coin?.also { coin ->
-					handleCoinDetail(coin)
-				}
+			binding.progressBar.isVisible = it is Resource.Loading
+			when (it) {
+				is Resource.Success -> handleCoinDetail(it.data)
+				is Resource.Error -> handleErrorMessage(it.message ?: "")
+				else -> {}
 			}
 		}
 	}
 
-	private fun handleCoinDetail(coinDetail: CoinDetail) {
+	private fun handleCoinDetail(coinDetail: CoinDetail?) {
 		binding.content.text = coinDetail.toString()
 		binding.content.isVisible = true
 	}

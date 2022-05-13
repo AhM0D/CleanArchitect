@@ -11,8 +11,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ir.myket.architectsample.R
-import ir.myket.architectsample.data.model.Coin
+import ir.myket.architectsample.common.Resource
 import ir.myket.architectsample.databinding.FragmentCoinListBinding
+import ir.myket.architectsample.domain.model.Coin
 
 @AndroidEntryPoint
 class ListContentFragment : Fragment(R.layout.fragment_coin_list) {
@@ -35,26 +36,23 @@ class ListContentFragment : Fragment(R.layout.fragment_coin_list) {
 		super.onViewCreated(view, savedInstanceState)
 		viewModel.getCoins()
 		viewModel.coinsListState.observe(viewLifecycleOwner) {
-			binding.progressBar.isVisible = it.isLoading
-			if (!it.isLoading) {
-				it.error?.message?.also { error ->
-					handleErrorMessage(error)
-				}
-				it.coin?.also { coin ->
-					handleCoinInfo(coin)
-				}
+			binding.progressBar.isVisible = it is Resource.Loading
+			when (it) {
+				is Resource.Success -> handleCoinInfo(it.data)
+				is Resource.Error -> handleErrorMessage(it.message ?: "")
+				else -> {}
 			}
 		}
 
 		binding.btn.setOnClickListener {
 			findNavController().navigate(
 				R.id.action_list_to_detail,
-				bundleOf("id" to viewModel.coinsListState.value?.coin?.id)
+				bundleOf("id" to viewModel.coinsListState.value?.data?.id)
 			)
 		}
 	}
 
-	private fun handleCoinInfo(coin: Coin) {
+	private fun handleCoinInfo(coin: Coin?) {
 		binding.content.text = coin.toString()
 		binding.content.isVisible = true
 	}
