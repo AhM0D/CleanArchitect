@@ -14,6 +14,7 @@ import ir.myket.architectsample.R
 import ir.myket.architectsample.common.Resource
 import ir.myket.architectsample.databinding.FragmentCoinListBinding
 import ir.myket.architectsample.domain.model.Coin
+import ir.myket.architectsample.domain.model.CoinInfo
 
 @AndroidEntryPoint
 class ListContentFragment : Fragment(R.layout.fragment_coin_list) {
@@ -44,6 +45,15 @@ class ListContentFragment : Fragment(R.layout.fragment_coin_list) {
 			}
 		}
 
+		viewModel.randomCoinInfo.observe(viewLifecycleOwner) {
+			binding.progressBar.isVisible = it is Resource.Loading
+			when (it) {
+				is Resource.Success -> handleCoinInfo(it.data)
+				is Resource.Error -> handleErrorMessage(it.message ?: "")
+				else -> {}
+			}
+		}
+
 		binding.btn.setOnClickListener {
 			findNavController().navigate(
 				R.id.action_list_to_detail,
@@ -53,7 +63,12 @@ class ListContentFragment : Fragment(R.layout.fragment_coin_list) {
 	}
 
 	private fun handleCoinInfo(coin: Coin?) {
-		binding.content.text = coin.toString()
+		binding.content.text = "${binding.content.text} \n\n $coin"
+		binding.content.isVisible = true
+	}
+
+	private fun handleCoinInfo(coinInfo: CoinInfo?) {
+		binding.content.text = "${binding.content.text} \n\n $coinInfo"
 		binding.content.isVisible = true
 	}
 
