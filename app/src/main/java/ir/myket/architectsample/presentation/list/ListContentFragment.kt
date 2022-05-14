@@ -63,13 +63,13 @@ class ListContentFragment : Fragment(R.layout.fragment_coin_list) {
 	}
 
 	private fun handleCoinInfo(coin: Coin?) {
-		binding.content.text = "${binding.content.text} \n\n $coin"
-		binding.content.isVisible = true
+		binding.coinInfo.text = "$coin"
+		binding.coinInfo.isVisible = true
 	}
 
 	private fun handleCoinInfo(coinInfo: CoinInfo?) {
-		binding.content.text = "${binding.content.text} \n\n $coinInfo"
-		binding.content.isVisible = true
+		binding.coin.text = "$coinInfo"
+		binding.coin.isVisible = true
 	}
 
 	private fun handleErrorMessage(message: String) {
