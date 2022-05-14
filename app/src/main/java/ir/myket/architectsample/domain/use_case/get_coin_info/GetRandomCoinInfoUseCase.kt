@@ -4,7 +4,6 @@ import ir.myket.architectsample.common.Resource
 import ir.myket.architectsample.domain.model.CoinInfo
 import ir.myket.architectsample.domain.repository.CoinRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -12,11 +11,18 @@ class GetRandomCoinInfoUseCase @Inject constructor(private val coinRepository: C
 
 	operator fun invoke(): Flow<Resource<CoinInfo>> = flow {
 		emit(Resource.Loading())
-		coinRepository.getCoins().firstOrNull { it is Resource.Success }?.also { it ->
-			coinRepository.getCoinById(it.data?.id ?: "").firstOrNull { it is Resource.Success }
-				?.also { detail ->
-					emit(Resource.Success(CoinInfo(coin = it.data, coinDetail = detail.data)))
-				}
+		val coin = coinRepository.getCoins()
+		if (coin is Resource.Success) {
+			coin.data ?: emit(Resource.Error("coin is null!"))
+			val coinDetail = coinRepository.getCoinById(coin.data!!.id)
+			if (coinDetail is Resource.Success) {
+				emit(Resource.Success(CoinInfo(coin = coin.data, coinDetail = coinDetail.data)))
+			} else {
+				emit(Resource.Error(coinDetail.message ?: "Unknown"))
+			}
+		} else {
+			emit(Resource.Error(coin.message ?: "Unknown"))
 		}
+
 	}
 }
